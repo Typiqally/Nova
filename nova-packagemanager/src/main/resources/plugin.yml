@@ -1,0 +1,7 @@
+name: Nova
+author: Typically
+main: org.nova.packagemanager.PackageManagerPlugin
+version: "1.0"
+commands:
+  package:
+    usage: /<command>
