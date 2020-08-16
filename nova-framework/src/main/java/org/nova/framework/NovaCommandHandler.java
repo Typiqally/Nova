@@ -46,23 +46,14 @@ public class NovaCommandHandler implements CommandExecutor, TabCompleter {
     }
 
     private boolean onSubCommand(CommandSender sender, NovaCommand command, String[] args) {
-        if (command == null || args.length == 0) {
-            return false;
+        final NovaCommand subCommand = args.length > 0 ? command.getSubCommand(args[0]) : null;
+
+        if (subCommand == null) {
+            return command.onCommand(sender, args);
         }
 
-        int i;
-        NovaCommand subCommand = command;
-        for (i = 0; i < args.length; i++) {
-            final NovaCommand c = subCommand.getSubCommand(args[i]);
-            if (c != null) {
-                subCommand = c;
-            } else {
-                break;
-            }
-        }
-
-        final String[] modifiedArgs = Arrays.copyOfRange(args, i, args.length);
-        return subCommand.onCommand(sender, modifiedArgs);
+        final String[] modifiedArgs = Arrays.copyOfRange(args, 1, args.length);
+        return this.onSubCommand(sender, subCommand, modifiedArgs);
     }
 
     @Override
