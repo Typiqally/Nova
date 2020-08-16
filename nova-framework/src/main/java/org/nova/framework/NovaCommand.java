@@ -14,20 +14,6 @@ public abstract class NovaCommand {
 
     public abstract boolean onCommand(CommandSender sender, String[] args);
 
-    public boolean onSubCommand(CommandSender sender, String[] args) {
-        if (args.length == 0) {
-            return false;
-        }
-
-        final NovaCommand subCommand = getSubCommand(args[0]);
-        if (subCommand == null) {
-            return false;
-        }
-
-        final String[] modifiedArgs = Arrays.copyOfRange(args, 1, args.length);
-        return subCommand.onCommand(sender, modifiedArgs);
-    }
-
     public List<String> onTabComplete(CommandSender sender, String[] args) {
         return subCommands.stream()
                 .filter(command -> PermissionValidator.validate(sender, command.getManifest().permissions()))

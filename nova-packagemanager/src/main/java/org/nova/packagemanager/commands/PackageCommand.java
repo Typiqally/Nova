@@ -26,9 +26,7 @@ public class PackageCommand extends NovaCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, String[] args) {
-        if (!onSubCommand(sender, args)) {
-            sender.sendMessage(String.format("Running the main package command with args %s", Arrays.toString(args)));
-        }
+        sender.sendMessage(String.format("Running the main package command with args %s", Arrays.toString(args)));
 
         return true;
     }

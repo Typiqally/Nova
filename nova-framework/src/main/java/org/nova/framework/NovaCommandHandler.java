@@ -27,21 +27,46 @@ public class NovaCommandHandler implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        final NovaCommand novaCommand = getCommand(command.getName());
-        if (novaCommand == null)
+    public boolean onCommand(CommandSender sender, Command bukkitCommand, String label, String[] args) {
+        final NovaCommand command = getCommand(bukkitCommand.getName());
+        if (command == null) {
             return false;
+        }
 
-        if (!PermissionValidator.validate(sender, novaCommand.getManifest().permissions())) {
+        if (!PermissionValidator.validate(sender, command.getManifest().permissions())) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', NO_PERMISSION_RESPONSE));
             return true;
         }
 
-        return novaCommand.onCommand(sender, args);
+        if (onSubCommand(sender, command, args)) {
+            return true;
+        }
+
+        return command.onCommand(sender, args);
+    }
+
+    private boolean onSubCommand(CommandSender sender, NovaCommand command, String[] args) {
+        if (command == null || args.length == 0) {
+            return false;
+        }
+
+        int i;
+        NovaCommand subCommand = command;
+        for (i = 0; i < args.length; i++) {
+            final NovaCommand c = subCommand.getSubCommand(args[i]);
+            if (c != null) {
+                subCommand = c;
+            } else {
+                break;
+            }
+        }
+
+        final String[] modifiedArgs = Arrays.copyOfRange(args, i, args.length);
+        return subCommand.onCommand(sender, modifiedArgs);
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
+    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         final NovaCommand novaCommand = getCommand(command.getName());
         if (novaCommand == null) {
             return null;
